@@ -1,0 +1,4 @@
+Requires (python3):
+cv2
+numpy
+google-cloud-vision
