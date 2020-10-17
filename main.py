@@ -20,39 +20,53 @@ def detect_text(path):
         writing+=' ' + text.description
     return  writing
 
-prev_state = False
-curr_state = False
-while True:
-    page_in_frame = False
-    video_capture = cv2.VideoCapture(0)
-    ret, frame = video_capture.read()
-    cv2.imwrite('stack.jpg', frame)
-    image = cv2.imread('stack.jpg',-1)
-    paper = cv2.resize(image,(500,500))
-    ret, thresh_gray = cv2.threshold(cv2.cvtColor(paper, cv2.COLOR_BGR2GRAY),
-                            200, 255, cv2.THRESH_BINARY)
-    contours, hier = cv2.findContours(thresh_gray, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
-    if len(contours) < 10:
-        page_in_frame = True #probably
-        curr_state = page_in_frame
-        for c in contours:
-            rect = cv2.minAreaRect(c)
-            box = cv2.boxPoints(rect)
-            # convert all coordinates floating point values to int
-            box = np.int0(box)
-            # draw a green 'nghien' rectangle
-            cv2.drawContours(paper, [box], 0, (0, 255, 0),1)
+def start_video():
+    count = 0
+    texts = []
+    while count <= 3:
+        page_in_frame = False
+        video_capture = cv2.VideoCapture(0)
+        ret, frame = video_capture.read()
+        cv2.imwrite('stack.jpg', frame)
+        image = cv2.imread('stack.jpg',-1)
+        paper = cv2.resize(image,(500,500))
+        ret, thresh_gray = cv2.threshold(cv2.cvtColor(paper, cv2.COLOR_BGR2GRAY),
+                                200, 255, cv2.THRESH_BINARY)
+        contours, hier = cv2.findContours(thresh_gray, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
+        if len(contours) < 10:
+            page_in_frame = True #probably
+            curr_state = page_in_frame
+            for c in contours:
+                rect = cv2.minAreaRect(c)
+                box = cv2.boxPoints(rect)
+                # convert all coordinates floating point values to int
+                box = np.int0(box)
+                # draw a green 'nghien' rectangle
+                cv2.drawContours(paper, [box], 0, (0, 255, 0),1)
 
+        if (page_in_frame):
+            text = detect_text('stack.jpg')
+            res = text.rsplit('\n', 1)
+            string = res[1] 
+            texts.append(string)
+            # print(string)
+            count += 1
+        
 
-    cv2.imshow('paper', paper)
-    #cv2.imwrite('paper.jpg',paper)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+        cv2.imshow('paper', paper)
+        #cv2.imwrite('paper.jpg',paper)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
-    if ((not prev_state) and curr_state):
-        print(detect_text('stack.jpg'))
-    
-    prev_state = curr_state
-    curr_state = False
+    # print(texts)
+    ans = max(set(texts), key=texts.count)
+    print(ans)
+    video_capture.release()
 
-video_capture.release()
+def main():
+    while True:
+        print("Press enter to start a reading!")
+        in1 = input()
+        start_video()
+
+main()
