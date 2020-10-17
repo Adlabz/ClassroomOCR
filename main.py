@@ -1,7 +1,25 @@
 # Python code to detect an arrow (seven-sided shape) from an image.
 import numpy as np
-import imutils
 import cv2
+
+
+def detect_text(path):
+    from google.cloud import vision
+    import io
+    client = vision.ImageAnnotatorClient()
+
+    with io.open(path, 'rb') as image_file:
+        content = image_file.read()
+
+    image = vision.Image(content=content)
+
+    response = client.text_detection(image=image)
+    texts = response.text_annotations
+    writing = ''
+
+    for text in texts:
+        writing+=' ' + text.description
+    return  writing
 
 while True:
     page_in_frame = False
@@ -27,4 +45,8 @@ while True:
     #cv2.imwrite('paper.jpg',paper)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
+
+    if page_in_frame:
+        print(detect_text('stack.jpg'))
+
 video_capture.release()
