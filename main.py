@@ -1,4 +1,3 @@
-# Python code to detect an arrow (seven-sided shape) from an image.
 import numpy as np
 import cv2
 
