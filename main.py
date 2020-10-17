@@ -21,6 +21,8 @@ def detect_text(path):
         writing+=' ' + text.description
     return  writing
 
+prev_state = False
+curr_state = False
 while True:
     page_in_frame = False
     video_capture = cv2.VideoCapture(0)
@@ -33,6 +35,7 @@ while True:
     contours, hier = cv2.findContours(thresh_gray, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
     if len(contours) < 10:
         page_in_frame = True #probably
+        curr_state = page_in_frame
         for c in contours:
             rect = cv2.minAreaRect(c)
             box = cv2.boxPoints(rect)
@@ -41,12 +44,16 @@ while True:
             # draw a green 'nghien' rectangle
             cv2.drawContours(paper, [box], 0, (0, 255, 0),1)
 
+
     cv2.imshow('paper', paper)
     #cv2.imwrite('paper.jpg',paper)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-    if page_in_frame:
+    if ((not prev_state) and curr_state):
         print(detect_text('stack.jpg'))
+    
+    prev_state = curr_state
+    curr_state = False
 
 video_capture.release()
