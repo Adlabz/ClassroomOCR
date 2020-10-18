@@ -42,7 +42,7 @@ def start_video():
                 # convert all coordinates floating point values to int
                 box = np.int0(box)
                 # draw a green 'nghien' rectangle
-                cv2.drawContours(paper, [box], 0, (0, 255, 0),1)
+                # cv2.drawContours(paper, [box], 0, (0, 255, 0),1)
 
         if (page_in_frame):
             text = detect_text('stack.jpg')
@@ -53,7 +53,7 @@ def start_video():
             count += 1
 
 
-        cv2.imshow('paper', paper)
+        cv2.imshow('paper', frame)
         #cv2.imwrite('paper.jpg',paper)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
