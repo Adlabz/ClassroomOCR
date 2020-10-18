@@ -47,11 +47,11 @@ def start_video():
         if (page_in_frame):
             text = detect_text('stack.jpg')
             res = text.rsplit('\n', 1)
-            string = res[1] 
+            string = res[1]
             texts.append(string)
             # print(string)
             count += 1
-        
+
 
         cv2.imshow('paper', paper)
         #cv2.imwrite('paper.jpg',paper)
@@ -65,8 +65,13 @@ def start_video():
 
 def main():
     while True:
-        print("Press enter to start a reading!")
-        in1 = input()
+        print("Press \'s\' to start a reading!")
+        video_capture = cv2.VideoCapture(0)
+        while True:
+            ret, frame = video_capture.read()
+            cv2.imshow('paper', frame)
+            if cv2.waitKey(1) & 0xFF == ord('s'):
+                break
         start_video()
 
 main()
