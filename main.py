@@ -23,7 +23,7 @@ def detect_text(path):
 def start_video():
     count = 0
     texts = []
-    while count <= 3:
+    while count <= 1:
         page_in_frame = False
         video_capture = cv2.VideoCapture(0)
         ret, frame = video_capture.read()
